@@ -1,4 +1,7 @@
 
 <launch>
-
+	<node pkg="urg_node" name="Laser" type="urg_node"/>
+    <include file="$(find turtlebot_bringup)/launch/minimal.launch">
+	</include>
+	<node pkg="grp-pourpre" name="prog_python" type="move_avoid_collision.py"/>
 </launch>
