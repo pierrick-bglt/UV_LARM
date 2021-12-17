@@ -8,10 +8,10 @@ import random
 # Initialize variables
 collision = False
 marche_avant = True
-tirage = 0
+tirage = 1
 
 # robot variable 
-STEP_X = 1
+STEP_X = 2
 STEP_Z = 1
 
 # Initialize ROS::node
@@ -43,6 +43,7 @@ def move_command(data):
         else:
             cmd.angular.z = -STEP_Z  #DROITE
         commandPublisher.publish(cmd)
+        time.sleep(1)
 
 def interpret_scan(data):
     #interpètre les données
@@ -66,7 +67,7 @@ def interpret_scan(data):
 def amIcollision(obstacles):
     #test si le robot est en collisions
     for p in obstacles:     #test toutes les valeurs du dico obstacles
-        if abs(p[0]) <= 0.2 and abs(p[0]) >= 0.1:     #test l'axe des x à 20 cm
+        if abs(p[0]) <= 0.7 and abs(p[0]) >= 0.05:     #test l'axe des x à 20 cm
             #print('x =' + str(p[0]) + 'y =' + str(p[1]))
             #time.sleep(0.5)
             if p[1] <= 0.2 and p[1] >= -0.2: #test l'axe des y pour une ouverture de 90°
