@@ -3,4 +3,5 @@
 <launch>
 	<include file="$(find larm)/launch/challenge-1.launch">
 	</include>
+	<node pkg="grp-pourpre" name="prog_python" type="move_sim.py"/>
 </launch>

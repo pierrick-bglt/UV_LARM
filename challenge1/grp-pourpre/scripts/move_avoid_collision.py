@@ -47,7 +47,7 @@ def move_command(data):
 def interpret_scan(data):
     #interpètre les données
     global collision #déclaration variable globale 
-    #rospy.loginfo('I get scans')
+    rospy.loginfo('I get scans')
     obstacles= []
     angle= data.angle_min
     for aDistance in data.ranges :
@@ -58,9 +58,9 @@ def interpret_scan(data):
             ]
             obstacles.append( aPoint )
         angle+= data.angle_increment
-    #rospy.loginfo( str(
-    #    [ [ round(p[0], 2), round(p[1], 2) ] for p in  obstacles[0:10] ] 
-    #) + " ..." )
+    rospy.loginfo( str(
+        [ [ round(p[0], 2), round(p[1], 2) ] for p in  obstacles[0:10] ] 
+    ) + " ..." )
     collision = amIcollision(obstacles)
 
 def amIcollision(obstacles):
