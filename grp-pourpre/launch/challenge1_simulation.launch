@@ -4,4 +4,5 @@
 	<include file="$(find larm)/launch/challenge-1.launch">
 	</include>
 	<node pkg="grp-pourpre" name="prog_python" type="move_sim.py"/>
+	 <node type="rviz" name="rviz" pkg="rviz" args="-d $(find grp-pourpre)/rviz_file/rviz_setup.rviz" />
 </launch>
