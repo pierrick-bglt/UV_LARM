@@ -6,6 +6,8 @@ Bienvenue sur la branche Git dédiée au challenge 1 de l'UV LARM du groupe pour
 
 Le but de ce projet est de faire se déplacer un robot dans une zone restreinte avec des obstacles, à la fois via une simulation virtuelle mais aussi avec un Turtlebot réel. Pour cela, nous utilisons l'environnement ROS (Robot Operating System) et avons créé des launchs ainsi que des scripts Python.
 
+## Notre stratégie
+
 ## Installation
 
 Récupérez notre code en clonant notre git :
@@ -18,7 +20,25 @@ Basculez sur la branche challenge1 :
 git checkout challenge1
 ```
 
-à faire 
+## Phase de tests pour l'évaluation
+
+Pour lancer la simulation ou la démo avec le Turtlebot, copiez ces commandes dans le catkin workspace (compiler et sourcer) :
+```git
+catkin_make
+source devel/setup.bash
+```
+
+Pour lancer la simulation :
+```git
+roslaunch grp-pourpre challenge1_simulation.launch
+```
+
+Pour lancer la démo avec le Turtlebot :
+```git
+roslaunch grp-pourpre challenge1_turtlebot.launch
+```
+
+
 
 
 
