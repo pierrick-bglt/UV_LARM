@@ -9,10 +9,14 @@ Le but de ce projet est de faire se déplacer un robot dans une zone restreinte 
 ## Installation
 
 Récupérez notre code en clonant notre git :
-'''git
+```git
 git clone https://github.com/pierrick-bglt/UV_LARM
-'''git 
+```
 
+Basculez sur la branche challenge1 :
+```git
+git checkout challenge1
+```
 
 à faire 
 
