@@ -8,6 +8,10 @@ Le but de ce projet est de faire se déplacer un robot dans une zone restreinte 
 
 ## Notre stratégie
 
+Notre stratégie se base sur une rotation aléatoire de la rotation droite ou gauche.
+A chaque fois que le robot arrive devant un mur sa probabilité de tourner à droite ou gauche est de 50%.
+Avec cette stratégie, le robot finira par explorer tout son environnement.
+
 ## Installation
 
 Récupérez notre code en clonant notre git :
