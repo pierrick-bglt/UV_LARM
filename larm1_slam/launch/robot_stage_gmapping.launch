@@ -3,6 +3,6 @@
 	</include>
 	<node type="rviz" name="rviz" pkg="rviz" args="-d $(find grp-pourpre)/rviz_file/rviz_setup_slam.rviz" />
 	<node type="stageros" name="stage" pkg="stage_ros" args="-d $(find stage_ros)/world/willow-erratic.world" />
-	<node pkg="rosbag" type="record" name="rec_data" args="--clock /home/pierrick/catkin_ws/src/UV_LARM/larm1_slam/launch" />
+	<node pkg="rosbag" type="record" name="rec_data" args="/home/pierrick/catkin_ws/src/UV_LARM/larm1_slam/launch" />
 	<node pkg="gmapping" type="slam_gmapping" name="gmapping" args="scan:=base_scan" />
 </launch> 
