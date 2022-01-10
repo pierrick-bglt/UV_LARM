@@ -2,8 +2,9 @@ import cv2
 import sys
 import numpy as np
 
-cascPath = 'haarcascade_frontalface_default.xml'
-faceCascade = cv2.CascadeClassifier(cascPath)
+#cascPath = 'haarcascade_frontalface_default.xml'
+#faceCascade = cv2.CascadeClassifier(cascPath)
+faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 video_capture = cv2.VideoCapture(0)
 
@@ -24,7 +25,6 @@ while True:
     cv2.imshow('Video', frame)
 
 # Quit the program with the 'q' key is pressed
-
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
