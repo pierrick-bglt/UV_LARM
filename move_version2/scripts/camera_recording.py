@@ -1,41 +1,73 @@
 #!/usr/bin/env python
 import rospy
-from geometry_msgs.msg import PoseStamped, Twist
-import tf
+from std_msgs.msg import String
+from cv_bridge import CvBridge
+from sensor_msgs import Image
 
-# Déclaration de la variable globale goal
-goal= PoseStamped()
-
-# Subscriber node qui reçoit les informations d'objectifs de deplacement
 def callback(data):
-    global goal
-    goal= data
-    rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
+    rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
+    
+def listener():
+    rospy.init_node('listener', anonymous=True)
+    rospy.Subscriber("camera/color/image_raw", Image, callback)
+    rospy.spin()
 
-# Second callback activé fréquemment, pour envoyer la commande de vélocité au robot
-def move_command(data):
-    goal.header.stamp= rospy.Time() #on s'en fout du temps donc on l'initialise à 0
-    local_goal= tfListener.transformPose("base_footprint", goal)
-    cmd= Twist()
-    cmd.linear.x= 0.1
-    commandPublisher.publish(cmd)
+if __name__ == '__main__':
+    listener()
 
-###########################################################################
-# First of all:
-rospy.init_node('talker', anonymous=True)
+def convert() :
+    bridge = CvBridge()
+    cv_image = bridge.imgmsg_to_cv2(image_message, desired_encoding='passthrough')
 
-# Initialize ROS Publisher node
-commandPublisher= rospy.Publisher('my_command', Twist, queue_size=10)
+"""
+#!/usr/bin/env python
+from __future__ import print_function
 
-# Initialize ROS Subcriber node
-rospy.Subscriber("goal", PoseStamped, callback)
+import roslib
+roslib.load_manifest('my_package')
+import sys
+import rospy
+import cv2
+from std_msgs.msg import String
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge, CvBridgeError
 
-# Initialisation de la variable globale qui subscribe aux topics tf
-tfListener= tf.TransformListener()
+class image_converter:
 
-# call the move_command at a regular frequency:
-rospy.Timer( rospy.Duration(0.1), move_command, oneshot=False )
+  def __init__(self):
+    self.image_pub = rospy.Publisher("image_topic_2",Image)
 
-# spin() enter the program in a infinite loop
-rospy.spin()
+    self.bridge = CvBridge()
+    self.image_sub = rospy.Subscriber("image_topic",Image,self.callback)
 
+  def callback(self,data):
+    try:
+      cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
+    except CvBridgeError as e:
+      print(e)
+
+    (rows,cols,channels) = cv_image.shape
+    if cols > 60 and rows > 60 :
+      cv2.circle(cv_image, (50,50), 10, 255)
+
+    cv2.imshow("Image window", cv_image)
+    cv2.waitKey(3)
+
+    try:
+      self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
+    except CvBridgeError as e:
+      print(e)
+
+def main(args):
+  ic = image_converter()
+  rospy.init_node('image_converter', anonymous=True)
+  try:
+    rospy.spin()
+  except KeyboardInterrupt:
+    print("Shutting down")
+  cv2.destroyAllWindows()
+
+if __name__ == '__main__':
+    main(sys.argv)
+
+"""
