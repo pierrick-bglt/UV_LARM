@@ -1,9 +1,4 @@
-#!/usr/bin/env python
-import rospy
-from std_msgs.msg import String
-from cv_bridge import CvBridge
-from sensor_msgs import Image
-
+"""
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
     
@@ -21,10 +16,9 @@ def convert() :
 
 """
 #!/usr/bin/env python
-from __future__ import print_function
+#from  __future__  import print_function
 
 import roslib
-roslib.load_manifest('my_package')
 import sys
 import rospy
 import cv2
@@ -35,7 +29,7 @@ from cv_bridge import CvBridge, CvBridgeError
 class image_converter:
 
   def __init__(self):
-    self.image_pub = rospy.Publisher("image_topic_2",Image)
+    self.image_pub = rospy.Publisher("image_topic_2",Image, queue_size=10)
 
     self.bridge = CvBridge()
     self.image_sub = rospy.Subscriber("image_topic",Image,self.callback)
@@ -70,4 +64,3 @@ def main(args):
 if __name__ == '__main__':
     main(sys.argv)
 
-"""

@@ -18,7 +18,21 @@ def isIempty(face):
         print("une bouteille est détectée")
         return True 
 
-video_capture = cv2.VideoCapture(0)
+#video_capture = cv2.VideoCapture(0)
+
+# Subscriber node afin de recevoir les messages de la caméra
+def callback(data):
+    rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
+    
+def listener():
+    rospy.init_node('listener', anonymous=True)
+    rospy.Subscriber("camera/color/image_raw", Image, callback)
+    rospy.spin()
+
+if __name__ == '__main__':
+    listener()
+
+
 
 while True:
 # Capture the video frame-by-frame
