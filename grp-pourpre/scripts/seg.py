@@ -21,10 +21,10 @@ def souris(event, x, y, flags, param):
         if color<250:
             color+=1
             
-    lo[0]=color-5   # intervalle d'erreur 
-    hi[0]=color+5
+    lo[0]=color-10   # intervalle d'erreur 
+    hi[0]=color+20
 
-color=100 # teinte de départ
+color=1 # teinte de départ
 
 lo=np.array([color-5, 100, 50]) # H S V 
 hi=np.array([color+5, 255,255])
@@ -40,9 +40,9 @@ while True: # permets la lecture en continue
     ret, frame=cap.read() #lecture d'une image # ret booléen 
     image=cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) # convertis en HSV
     mask=cv2.inRange(image, lo, hi) # fonction qui filtre en blanc tous les pixels entre lo et hi de l'image # double seuillage 
-    #image=cv2.blur(image, (7, 7)) # permets de flouter l'image 
-    #mask=cv2.erode(mask, None, iterations=4) # filtre le bruit en diminuant la taille des pixels
-    #mask=cv2.dilate(mask, None, iterations=4) # augmente la taille des pixels de la zone blanche 
+    image=cv2.blur(image, (7, 7)) # permets de flouter l'image 
+    mask=cv2.erode(mask, None, iterations=4) # filtre le bruit en diminuant la taille des pixels
+    mask=cv2.dilate(mask, None, iterations=4) # augmente la taille des pixels de la zone blanche 
     image2=cv2.bitwise_and(frame, frame, mask= mask) # permets d'afficher l'image segmenté avec un et logique 
     cv2.putText(frame, "Couleur: {:d}".format(color), (10, 30), cv2.FONT_HERSHEY_DUPLEX, 1, color_info, 1, cv2.LINE_AA)
     
