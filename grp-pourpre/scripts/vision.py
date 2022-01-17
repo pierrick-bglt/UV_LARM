@@ -26,6 +26,7 @@ faceCascade = cv2.CascadeClassifier(cascPath)
 # Initialisation de la variable globale
 bridge = CvBridge()
 cv_image = None
+cv_depth = None
 coord_detection = None
 global_pose = PoseStamped()
 face_width = 0
@@ -52,7 +53,7 @@ def pose_cube(x, y):
     #coord = robotPosition()
     cube.pose(x,y)
     cube.publishing()
-    print("x , y =" + str(x) + '\n' + str(y))
+    #print("x , y =" + str(x) + '\n' + str(y))
 
 def detection():
     global cam, cv_image, face_width, abscisse
@@ -72,22 +73,29 @@ def detection():
         
         # Drawing rectangle around the face
         for (x, y, w, h) in faces:
-            cv2.rectangle(cv_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            cv2.rectangle(cv_image, (x, y), (x+w, y+h), (255, 255, 0), 2)
+
             #if faces is not None:
             #pose_cube()
             face_width = w # argument fonction z
+            #if ( x + (w/2) < 720):
+            print("tetete")
+            profondeur = cv_depth[int( y+(h/2)   ),int( x+(w/2))]
+            cv2.rectangle(cv_image, ( int(y+(h/2) ),int(x+(w/2)),(int(y+(h/2)+10),int(x+(w/2)+10)) ,(0,0,255))) 
+            print('prof =' + str(profondeur))
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            cv2.putText(cv_image, str(profondeur) + ' mm',(x,y), font, .5, (255,255,0), 2, cv2.LINE_AA)
             #print("coordonée abscisse =" + str(abscisse))
-            pose_robot = robotPosition()
-            ordonnee = x/500 + pose_robot.pose.position.y
-            abscisse = pose_robot.pose.position.x + Distance_finder(x+w) 
-            #+ pose_robot.pose.position.x
-            pose_cube(ordonnee, abscisse)
+            # pose_robot = robotPosition()
+            # ordonnee = x/500 + pose_robot.pose.position.y
+            # abscisse = pose_robot.pose.position.x + Distance_finder(x+w) 
+            # #+ pose_robot.pose.position.x
+            # pose_cube(ordonnee = 0, abscisse)
             #print("pose robot : " + str(pose_robot))
 
                 
         # Show the frame
         cv2.imshow('Video', cv_image)
-        #cv2.imshow('video2', image2)
         cv2.waitKey(3)
 
 def FocalLength(measured_distance = 45, real_width = 5.5): 
@@ -103,13 +111,20 @@ def Distance_finder(face_width_in_frame, real_bottle_width = 5.5):
     return distance
 
 def callback2(data):
-    i = 1
+    global cv_depth
+    try:
+        # print("callback")
+        cv_depth = bridge.imgmsg_to_cv2(data, "passthrough")
+        cv2.imshow('video_depth', cv_depth)
+        cv2.waitKey(3)
+    except CvBridgeError as e:
+        print(e)
 
 #initalisation node
 rospy.init_node('Vision_Node', anonymous=True)  
 
 tfListener = tf.TransformListener()
 rospy.Subscriber("/camera/color/image_raw", Image, callback) #connection subscriber
-#rospy.Subscriber("camera/depth/image_rect_raw", Image, callback2)
+rospy.Subscriber("camera/aligned_depth_to_color/image_raw", Image, callback2)
 #rospy.Timer(rospy.Duration(0.1), detection) # lance le programme de détection rate 10 Hz
 rospy.spin() #boucle infinie
