@@ -61,6 +61,8 @@ vision.py concentre la plus grosse partie de notre travail avec différents call
 ## Commentaires de nos résultats
 
 Notre aspect vision n’est pas optimal. En effet, bien qu’il puisse bien distinguer les bouteilles, il est également très sensible à l’environnement autour et repère de manière intempestive, tout ce qui semble être d’une couleur proche à nos bouteilles (surtout le pied des délimitations de la zone qui est également de couleur noire). Pour remédier à cela, nous aurions pu soit employer une autre méthode, soit insister sur la couleur en mettant en place un histogramme de couleurs.
-De plus, nous pouvons affiner notre placement de cube sur viz en récupérant la profondeur z du capteur et de la placer dans les coordonnées cartésiennes du robot. 
+Par ailleurs, nous avons été confrontés à un problème technique lié à ROS la fin de journée du vendredi, en effet, la caméra ne se lançait plus et nous n'avions donc aucun retour vidéo pour analyser ce qui était repéré par la machine.
+
+De plus, nous pouvons affiner notre placement de cube sur rviz en récupérant la profondeur z du capteur et de la placer dans les coordonnées cartésiennes du robot. 
 
 Tous ces éléments sont des objectifs pour notre rendu final.
