@@ -1,19 +1,15 @@
 #!/usr/bin/env python3
+
 from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
 from geometry_msgs.msg import Vector3
 import rospy
 import time
 
-
-
 class Cube():
    def __init__(self):
-      #date = time.process_time()
-      #print(date)
-      #rospy.init_node('marqueur')
       topic = 'visualization_marker'
-      self.publisher = rospy.Publisher(topic, Marker, queue_size=10)
+      self.publisher = rospy.Publisher(topic, Marker, queue_size=1)
 
       # Initialisation du marker
       self.marker = Marker()
@@ -45,11 +41,10 @@ class Cube():
 
    def publishing(self):
          self.publisher.publish(self.marker)
-         #rospy.rostime.wallsleep(1.0)
+         #print('marker envoyé :' + str(self.marker))
 
 
 if __name__ == '__main__':
    cube1 = Cube()
    cube1.pose(0, 3)
    cube1.publish()
-   
