@@ -1,0 +1,20 @@
+<launch>
+  <!-- Bringup the robot -->
+  <!-- <node pkg="urg_node" name="Laser" type="urg_node"/>
+	<include file="$(find turtlebot_bringup)/launch/minimal.launch">
+	</include> -->
+  <include file="$(find tbot_gazebo)/launch/spawn_tbot.launch">
+	</include>
+
+  <!-- Run the map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find grp-pourpre)/maps/dia.yaml" />
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find grp-pourpre)/rviz_file/autonomous_nav.rviz" />
+  <!-- <node name="map_server2" pkg="map_server" type="map_server" args="$(find grp-pourpre)/maps/dia.pgm" />
+  
+  --> <!-- Localization using AMCL -->
+   <node name="amcl" pkg="amcl" type="amcl" args="scan:=base_scan" />
+
+  <!-- Navigation using MoveBase -->
+  ...
+
+</launch>
