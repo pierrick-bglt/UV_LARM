@@ -11,8 +11,8 @@ marche_avant = True
 tirage = 0
 
 # robot variable 
-STEP_X = 1
-STEP_Z = 1
+STEP_X = 0.17
+STEP_Z = 0.9
 
 # Initialize ROS::node
 rospy.init_node('move', anonymous=True)
