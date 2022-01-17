@@ -6,4 +6,6 @@
 	<node pkg="tf" type="static_transform_publisher" name="scan_tf_broadcaster" args="0 0.1 0.1 0 0 0 1 base_footprint laser 10" />
 	<node pkg="grp-pourpre" name="prog_python" type="move_avoid_collision.py"/>
 	 <node type="rviz" name="rviz" pkg="rviz" args="-d $(find grp-pourpre)/rviz_file/rviz_setup.rviz" />
+	 <node pkg="rosbag" type="record" name="rec_data" args="-O mylaserdata /base_scan /tf" />
+	 <node pkg="gmapping" type="slam_gmapping" name="gmapping" args="scan:scan" />
 </launch>
