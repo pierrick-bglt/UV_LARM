@@ -9,6 +9,7 @@ from cv_bridge import CvBridge, CvBridgeError
 import tf
 from geometry_msgs.msg import PoseStamped, Twist, Point, Pose
 from visualization_msgs.msg import Marker
+from visualization_msgs.msg import MarkerArray
 import rospkg 
 rospack= rospkg.RosPack()
 sys.path.append( rospack.get_path('grp-pourpre') + "/scripts" )
@@ -58,7 +59,7 @@ def pose_cube(x, y):
 def detection():
     global cam, cv_image, face_width, abscisse
     # programme de détection 
-    # Capture the video frame-by-frame
+    # Capture the video frame-by-framebottlePosition
     if type(cv_image) != None: #si image non initialisé 
         gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
         # You must enter the values for the parameters denoted with callbackan x
@@ -78,20 +79,23 @@ def detection():
             #if faces is not None:
             #pose_cube()
             face_width = w # argument fonction z
-            #if ( x + (w/2) < 720):
-            print("tetete")
-            profondeur = cv_depth[int( y+(h/2)   ),int( x+(w/2))]
-            cv2.rectangle(cv_image, ( int(y+(h/2) ),int(x+(w/2)),(int(y+(h/2)+10),int(x+(w/2)+10)) ,(0,0,255))) 
-            print('prof =' + str(profondeur))
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(cv_image, str(profondeur) + ' mm',(x,y), font, .5, (255,255,0), 2, cv2.LINE_AA)
-            #print("coordonée abscisse =" + str(abscisse))
-            # pose_robot = robotPosition()
-            # ordonnee = x/500 + pose_robot.pose.position.y
-            # abscisse = pose_robot.pose.position.x + Distance_finder(x+w) 
-            # #+ pose_robot.pose.position.x
-            # pose_cube(ordonnee = 0, abscisse)
-            #print("pose robot : " + str(pose_robot))
+            if ( y+(h/2) < 720):
+                profondeur = cv_depth[int( y+(h/2)   ),int( x+(w/2))]
+                cv2.rectangle(cv_image, ( int( x+(w/2)  ),int( y+(h/2)  )),(int( x+(w/2) +10 ),int(  y+(h/2)  +10)) ,(0,0,255)) 
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                cv2.putText(cv_image, str(profondeur) + ' mm',(x,y), font, .5, (255,255,0), 2, cv2.LINE_AA)
+                abscisse = profondeur 
+                ordonnee = y
+                mark = Cube()
+                mark.transformation()
+                mark.pose(profondeur, y)
+                mark.publishing()
+                # pose_robot = robotPosition()
+                # ordonnee = x/500 + pose_robot.pose.position.y
+                # abscisse = pose_robot.pose.position.x + Distance_finder(x+w) 
+                # #+ pose_robot.pose.position.x
+                # pose_cube(ordonnee = 0, abscisse)
+                # print("pose robot : " + str(pose_robot))
 
                 
         # Show the frame
@@ -113,7 +117,6 @@ def Distance_finder(face_width_in_frame, real_bottle_width = 5.5):
 def callback2(data):
     global cv_depth
     try:
-        # print("callback")
         cv_depth = bridge.imgmsg_to_cv2(data, "passthrough")
         cv2.imshow('video_depth', cv_depth)
         cv2.waitKey(3)
