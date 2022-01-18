@@ -11,13 +11,14 @@ from geometry_msgs.msg import PoseStamped, Twist, Point, Pose
 from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
 import rospkg 
-rospack= rospkg.RosPack()
-sys.path.append( rospack.get_path('grp-pourpre') + "/scripts" )
-from mymarker import Cube
+# rospack= rospkg.RosPack()
+# sys.path.append( rospack.get_path('grp-pourpre') + "/scripts" )
+# from mymarker import Cube
 
 #cascPath = '/home/pierrick/catkin_ws/src/opencv-haar-classifier-training/data/cascade.xml'  #machine pipi
-#cascPath = '/home/pierrick/data_old/cascade.xml' #machine pipi
-cascPath = '/home/pierrick.bougault/Bureau/cascade.xml'  #poste école
+cascPath = '/home/pierrick/data_old/cascade.xml' #machine pipi
+#cascPath = '/home/pierrick.bougault/Bureau/cascade.xml'  #poste école
+#cascPath = '/home/pierrick/catkin_ws/src/UV_LARM/grp-pourpre/scripts/cascade.xml'
 faceCascade = cv2.CascadeClassifier(cascPath)
 #print(cv2.data.haarcascades)
 
@@ -34,10 +35,74 @@ face_width = 0
 abscisse = 0
 ordonnee = 0
 
+class Cube():
+   def __init__(self, pos_x, pos_y, pos_z =0, or_x = 0, or_y = 0, or_z = 0, or_w= 0):
+        topic = '/visualization_marker'
+        #rospy.init_node(topic, anonymous=True)  
+        self.publisher = rospy.Publisher(topic, MarkerArray, queue_size=10)
+        self.tfListener= tf.TransformListener()
+        self.marker_array_msg = MarkerArray()
+        self.i = 0
+        # # Initialisation du marker
+        self.lastBottle = Marker()
+        self.lastBottle.header.frame_id = "map"
+        self.lastBottle.header.stamp = rospy.Time.now()
+        self.lastBottle.type = Marker.CUBE
+        self.lastBottle.action = Marker.ADD
+        # CublastBottleouleur verte
+        self.lastBottle.color.r = 0.0
+        self.lastBottle.color.g = 1.0
+        self.lastBottle.color.b = 0.0
+        self.lastBottle.color.a = 1.0
+        # ScalastBottlemarker
+        self.lastBottle.scale.x = 0.2
+        self.lastBottle.scale.y = 0.2
+        self.lastBottle.scale.z = 0.2
+        # ScalastBottlemarker
+        self.lastBottle.scale.x = 0.2
+        self.lastBottle.scale.y = 0.2
+        self.lastBottle.scale.z = 0.2
+        self.lastBottle.lifetime = rospy.Duration(0)
+        # initialisation id marker 
+        self.lastBottle.header.seq = 0
+        # affectation coordonnées 
+        self.lastBottle.pose.position.x = pos_x / 1000
+        self.lastBottle.pose.position.y = pos_y / 1000
+        self.lastBottle.pose.position.z = pos_z
+        self.lastBottle.pose.orientation.x = or_x
+        self.lastBottle.pose.orientation.y = or_y
+        self.lastBottle.pose.orientation.z = or_z
+        self.lastBottle.pose.orientation.w = or_w
+
+        self.transformation()
+        self.publishing()
+        
+   def transformation(self):
+       # transforme les coordonées dans le repère robot 
+        bottlePoseStamped= PoseStamped()
+        bottlePoseStamped.header = self.lastBottle.header
+        bottlePoseStamped.pose = self.lastBottle.pose    # conversion de bottleposition en posestamped
+        bottleTransformed = self.tfListener.transformPose("map", bottlePoseStamped)
+        self.lastBottle.header = bottleTransformed.header
+        self.lastBottle.pose = bottleTransformed.pose
+        self.marker_array_msg.markers.append(self.lastBottle)
+        #print("boucle numéro : " + str(self.lastBottle.header.seq) + "\n" + str(self.marker_array_msg))
+        self.seqIncrement()
+        #print(self.lastBottle.header.seq )
+        print(self.marker_array_msg)
+
+   def seqIncrement(self):
+        self.lastBottle.header.seq = self.lastBottle.header.seq + 1
+
+   def publishing(self):
+       #publie la liste de marqueur
+        #print(self.lastBottle)
+        self.publisher.publish(self.marker_array_msg)
+
+
 def callback(data):
     global cv_image
     try:
-        # print("callback")
         cv_image = bridge.imgmsg_to_cv2(data, "bgr8")
         detection()
     except CvBridgeError as e:
@@ -57,21 +122,15 @@ def pose_cube(x, y):
     #print("x , y =" + str(x) + '\n' + str(y))
 
 def detection():
+    # programme de détection de bouteille
     global cam, cv_image, face_width, abscisse
-    # programme de détection 
+    print("> detection")
     # Capture the video frame-by-framebottlePosition
     if type(cv_image) != None: #si image non initialisé 
         gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
         # You must enter the values for the parameters denoted with callbackan x
         #gray = np.array(gray, dtype='uint8')
-
-        lo = 240
-        hi = 255
-        mask=cv2.inRange(gray, lo, hi) # fonction qui filtre en blanc tous leCascade.detectMultiScale(image = gray, scaleFactor = 1.05, minNeighbors = 4, minSize=(30,30), maxSize=(70, 70)) xels de la zone blanche 
-        image2=cv2.bitwise_and(cv_image, cv_image, mask= mask) # permets d'afficher l'image segmenté avec un et logique 
-        #gray = image2
-        faces = faceCascade.detectMultiScale(image = gray, scaleFactor = 1.05, minNeighbors = 200, minSize=(15,30), maxSize=(70, 70))
-        
+        faces = faceCascade.detectMultiScale(image = gray, scaleFactor = 1.05, minNeighbors = 4, minSize=(15,30), maxSize=(70, 70))
         # Drawing rectangle around the face
         for (x, y, w, h) in faces:
             cv2.rectangle(cv_image, (x, y), (x+w, y+h), (255, 255, 0), 2)
@@ -84,13 +143,8 @@ def detection():
                 cv2.rectangle(cv_image, ( int( x+(w/2)  ),int( y+(h/2)  )),(int( x+(w/2) +10 ),int(  y+(h/2)  +10)) ,(0,0,255)) 
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 cv2.putText(cv_image, str(profondeur) + ' mm',(x,y), font, .5, (255,255,0), 2, cv2.LINE_AA)
-                abscisse = profondeur 
-                ordonnee = y
-                mark = Cube()
-                mark.transformation()
-                mark.pose(profondeur, y)
-                mark.publishing()
-                # pose_robot = robotPosition()
+                Cube(profondeur, y)
+
                 # ordonnee = x/500 + pose_robot.pose.position.y
                 # abscisse = pose_robot.pose.position.x + Distance_finder(x+w) 
                 # #+ pose_robot.pose.position.x
@@ -118,8 +172,8 @@ def callback2(data):
     global cv_depth
     try:
         cv_depth = bridge.imgmsg_to_cv2(data, "passthrough")
-        cv2.imshow('video_depth', cv_depth)
-        cv2.waitKey(3)
+        #cv2.imshow('video_depth', cv_depth)
+        #cv2.waitKey(3)
     except CvBridgeError as e:
         print(e)
 

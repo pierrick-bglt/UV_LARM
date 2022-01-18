@@ -46,14 +46,6 @@ class Cube():
 
    def pose(self, pos_x, pos_y, pos_z =0, or_x = 0, or_y = 0, or_z = 0, or_w= 0):
    # Pose du marker
-      # self.marker.pose.position.x = pos_x / 1000
-      # self.marker.pose.position.y = pos_y / 1000
-      # self.marker.pose.position.z = pos_z
-      # self.marker.pose.orientation.x = or_x
-      # self.marker.pose.orientation.y = or_y
-      # self.marker.pose.orientation.z = or_z
-      # self.marker.pose.orientation.w = or_w
-
       self.lastBottle.pose.position.x = pos_x / 1000
       self.lastBottle.pose.position.y = pos_y / 1000
       self.lastBottle.pose.position.z = pos_z
@@ -94,8 +86,6 @@ class Cube():
 
       self.lastBottle = bottlePosition
       
-      
-
    def publishing(self):
       print(self.lastBottle)
       self.publisher.publish(self.marker_array_msg)

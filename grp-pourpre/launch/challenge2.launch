@@ -1,14 +1,7 @@
 <launch>
-	<!-- turtlebot_teleop_key already has its own built in velocity smoother -->
-  	<!--
-	<node pkg="turtlebot_teleop" type="turtlebot_teleop_key" name="turtlebot_teleop_keyboard"  output="screen">
-   	<param name="scale_linear" value="0.5" type="double"/>
-    	<param name="scale_angular" value="1.5" type="double"/>
-    	<remap from="turtlebot_teleop_keyboard/cmd_vel" to="cmd_vel"/>
-  	</node> -->
 	<node type="rviz" name="rviz" pkg="rviz" args="-d $(find grp-pourpre)/rviz_file/rviz_setup_slam.rviz" />
 	<param name="/use_sim_time" value="true"/>
-	<node pkg="rosbag" type="play" name="rec_data" args="--clock /home/pierrick.bougault/catkin_ws/src/git-larm/grp-pourpre/bagfiles/challenge-2.bag" />
+	<node pkg="rosbag" type="play" name="rec_data" args="--clock -l /media/pierrick/944A65EE4A65CD94/linuxStuff/challenge-2.bag" />
 	<node pkg="gmapping" type="slam_gmapping" name="gmapping" args="scan:scan" />
 	<node pkg="grp-pourpre" type="vision.py" name="vision_py" output="screen" />
 </launch> 
