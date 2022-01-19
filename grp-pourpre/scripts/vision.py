@@ -17,8 +17,8 @@ from math import sqrt
 # from mymarker import Cube
 
 #cascPath = '/home/pierrick/catkin_ws/src/opencv-haar-classifier-training/data/cascade.xml'  #machine pipi
-#cascPath = '/home/pierrick/data_old/cascade.xml' #machine pipi
-cascPath = '/home/pierrick.bougault/Bureau/cascade.xml'  #poste école
+cascPath = '/home/pierrick/data_old/cascade.xml' #machine pipi
+#cascPath = '/home/pierrick.bougault/Bureau/cascade.xml'  #poste école
 #cascPath = '/home/pierrick/catkin_ws/src/UV_LARM/grp-pourpre/scripts/cascade.xml'
 faceCascade = cv2.CascadeClassifier(cascPath)
 #print(cv2.data.haarcascades)
@@ -141,7 +141,10 @@ def pose_cube(x, y):
 
 def red_detection(cv_image):
     # define the list of boundaries
-    boundaries = [([0, 190, 190], [25,255,255])]
+    boundaries = [([0, 190, 190], [25,255,255]), #rouge
+    ([0, 0, 180], [255, 255, 255]), #blanc
+    ([0,0,0], [90,90,90]) #noir
+    ]
     # loop over the boundaries
     for (lower, upper) in boundaries:
         # create NumPy arrays from the boundaries
@@ -151,7 +154,7 @@ def red_detection(cv_image):
         # find the colors within the specified boundaries and apply
         # the mask
         mask = cv2.inRange(hsv_px, lower, upper)
-        output = cv2.bitwise_and(hsv_px, cv_image, mask = mask)
+        output = cv2.bitwise_and(cv_image, cv_image, mask = mask)
         # show the images
         cv2.imshow("red", output)
         cv2.waitKey(3)
