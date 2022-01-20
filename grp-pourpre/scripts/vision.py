@@ -12,14 +12,13 @@ from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
 import rospkg 
 from math import sqrt
-# rospack= rospkg.RosPack()
-# sys.path.append( rospack.get_path('grp-pourpre') + "/scripts" )
-# from mymarker import Cube
+
 
 #cascPath = '/home/pierrick/catkin_ws/src/opencv-haar-classifier-training/data/cascade.xml'  #machine pipi
-cascPath = '/home/pierrick/data_old/cascade.xml' #machine pipi
+#cascPath = '/home/pierrick/data_old/cascade.xml' #machine pipi
 #cascPath = '/home/pierrick.bougault/Bureau/cascade.xml'  #poste école
-#cascPath = '/home/pierrick/catkin_ws/src/UV_LARM/grp-pourpre/scripts/cascade.xml'
+rospack = rospkg.RosPack()
+cascPath = rospack.get_path('grp-pourpre') + '/scripts/cascade_v2.xml'
 faceCascade = cv2.CascadeClassifier(cascPath)
 #print(cv2.data.haarcascades)
 
@@ -167,7 +166,7 @@ def detection():
         gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
         # You must enter the values for the parameters denoted with callbackan x
         #gray = np.array(gray, dtype='uint8')
-        faces = faceCascade.detectMultiScale(image = gray, scaleFactor = 1.05, minNeighbors = 200, minSize=(15,30), maxSize=(70, 70))
+        faces = faceCascade.detectMultiScale(image = gray, scaleFactor = 1.1, minNeighbors = 200, minSize=(15,30), maxSize=(70, 70))
         # Drawing rectangle around the face
         for (x, y, w, h) in faces:
             cv2.rectangle(cv_image, (x, y), (x+w, y+h), (255, 255, 0), 2)
