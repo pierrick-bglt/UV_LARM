@@ -13,6 +13,11 @@ tirage = 0
 # robot variable 
 STEP_X = 0.17
 STEP_Z = 0.9
+<<<<<<< HEAD
+=======
+#STEP_X = 0
+#STEP_Z = 0
+>>>>>>> ee60b241e008da25ad36316bac2c4ed0baf18bfa
 
 # Initialize ROS::node
 rospy.init_node('move', anonymous=True)
