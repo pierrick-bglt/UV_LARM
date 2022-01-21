@@ -13,8 +13,6 @@ tirage = 0
 # robot variable 
 STEP_X = 0.17
 STEP_Z = 0.9
-# STEP_X = 0
-# STEP_Z = 0
 
 # Initialize ROS::node
 rospy.init_node('move', anonymous=True)
@@ -69,8 +67,6 @@ def amIcollision(obstacles):
     #test si le robot est en collisions
     for p in obstacles:     #test toutes les valeurs du dico obstacles
         if abs(p[0]) <= 0.2 and abs(p[0]) >= 0.1:     #test l'axe des x à 20 cm
-            #print('x =' + str(p[0]) + 'y =' + str(p[1]))
-            #time.sleep(0.5)
             if p[1] <= 0.2 and p[1] >= -0.2: #test l'axe des y pour une ouverture de 90°
                 return True
     return False

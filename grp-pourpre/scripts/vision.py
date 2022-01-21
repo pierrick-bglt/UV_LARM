@@ -1,30 +1,25 @@
 #!/usr/bin/env python3
 
+
+# importation de fonction et de module 
+
 import cv2
 import sys
 import numpy as np
 import rospy
+import tf
+import rospkg 
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
-import tf
 from geometry_msgs.msg import PoseStamped, Twist, Point, Pose
 from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
-import rospkg 
 from math import sqrt
 
-
-#cascPath = '/home/pierrick/catkin_ws/src/opencv-haar-classifier-training/data/cascade.xml'  #machine pipi
-#cascPath = '/home/pierrick/data_old/cascade.xml' #machine pipi
-#cascPath = '/home/pierrick.bougault/Bureau/cascade.xml'  #poste école
 rospack = rospkg.RosPack()
 cascPath = rospack.get_path('grp-pourpre') + '/scripts/cascade_v2.xml'
 faceCascade = cv2.CascadeClassifier(cascPath)
-#print(cv2.data.haarcascades)
 
-#faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + '/cascade.xml')
-
-# Subscriber node afin de recevoir les messages de la caméra
 # Initialisation de la variable globale
 bridge = CvBridge()
 cv_image = None
@@ -36,6 +31,7 @@ abscisse = 0
 ordonnee = 0
 
 class Cube():
+    #classe cube qui permets d'afficher les marqueurs dans rviz 
     lastSeq = -1
     marker_array_msg = MarkerArray()
     marker_log = []
@@ -100,22 +96,21 @@ class Cube():
         bottleTransformed = self.tfListener.transformPose("base_footprint", bottlePoseStamped)
         self.lastBottle.header = bottleTransformed.header
         self.lastBottle.pose = bottleTransformed.pose
-        if len(Cube.marker_log) > 0:
-            if self.get_minimal_dist() >= 0.4:
-                Cube.marker_log.append((self.lastBottle.pose.position.x, self.lastBottle.pose.position.y))
-                Cube.marker_array_msg.markers.append(self.lastBottle)
+        if len(Cube.marker_log) > 0: # si au moins un message dans la pile
+            if self.get_minimal_dist() >= 0.4: # si la distance au précédent marqueur est d'au moins 40 cm 
+                Cube.marker_log.append((self.lastBottle.pose.position.x, self.lastBottle.pose.position.y)) #ajout dans la pile d'hitorique des positions
+                Cube.marker_array_msg.markers.append(self.lastBottle) # ajout dans la liste de publication des marqueurs array 
                 return True 
             else:
                 return False
-        else:
-            Cube.marker_log.append((self.lastBottle.pose.position.x, self.lastBottle.pose.position.y))
+        else:  # sinon il y a zéro message dans la pile et on doit publier le premier marqueur 
+            Cube.marker_log.append((self.lastBottle.pose.position.x, self.lastBottle.pose.position.y)) # ajour dans la pile de position 
             return True 
 
     def publishing(self):
        #publie la liste de marqueur
         self.publisher.publish(Cube.marker_array_msg)
         self.publish = False
-
 
 def callback(data):
     global cv_image
@@ -125,18 +120,11 @@ def callback(data):
     except CvBridgeError as e:
         print(e)
   
-def robotPosition():
-    pose= PoseStamped()
-    pose.header.frame_id= "base_link"
-    global_pose= tfListener.transformPose("map", pose)
-    return global_pose
-
-def pose_cube(x, y):
-    cube = Cube()
-    #coord = robotPosition()
-    cube.pose(x,y)
-    cube.publishing()
-    #print("x , y =" + str(x) + '\n' + str(y))
+# def robotPosition():
+#     pose= PoseStamped()
+#     pose.header.frame_id= "base_link"
+#     global_pose= tfListener.transformPose("map", pose)
+#     return global_pose
 
 def red_detection(cv_image):
     # define the list of boundaries
@@ -176,25 +164,13 @@ def detection():
                 cv2.rectangle(cv_image, ( int( x+(w/2)  ),int( y+(h/2)  )),(int( x+(w/2) +10 ),int(  y+(h/2)  +10)) ,(0,0,255)) 
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 cv2.putText(cv_image, str(profondeur) + ' mm',(x,y), font, .5, (255,255,0), 2, cv2.LINE_AA)
-                Cube(profondeur, y)
-                red_detection(cv_image)              
+                Cube(profondeur, y) # place le cube dans rviz
+                red_detection(cv_image) # tentative de filtre d'image 
         # Show the frame
         cv2.imshow('Video', cv_image)
         cv2.waitKey(3)
 
-def FocalLength(measured_distance = 45, real_width = 5.5): 
-    # variable de référence mesuré à la main 
-    # measured_distance : distance de la position de référence
-    # real_with : largeur réelle de la bouteille 
-    focal_length = (face_width* measured_distance)/ real_width
-    return focal_length
-
-def Distance_finder(face_width_in_frame, real_bottle_width = 5.5):
-    focal_length = FocalLength()
-    distance = (real_bottle_width * focal_length)/face_width_in_frame
-    return distance
-
-def callback2(data):
+def callback_depth(data):
     global cv_depth
     try:
         cv_depth = bridge.imgmsg_to_cv2(data, "passthrough")
@@ -205,9 +181,7 @@ def callback2(data):
 
 #initalisation node
 rospy.init_node('Vision_Node', anonymous=True)  
-
-tfListener = tf.TransformListener()
+tfListener = tf.TransformListener() # initialisation du tf 
 rospy.Subscriber("/camera/color/image_raw", Image, callback) #connection subscriber
-rospy.Subscriber("camera/aligned_depth_to_color/image_raw", Image, callback2)
-#rospy.Timer(rospy.Duration(0.1), detection) # lance le programme de détection rate 10 Hz
+rospy.Subscriber("camera/aligned_depth_to_color/image_raw", Image, callback_depth)
 rospy.spin() #boucle infinie
