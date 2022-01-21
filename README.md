@@ -40,9 +40,13 @@ catkin_make
 source devel/setup.bash
 ```
 
-Pour lancer la démonstration :
+Pour lancer la démonstration physique :
 ```git
-roslaunch grp-pourpre challenge2.launch
+roslaunch grp-pourpre challenge3_tbot.launch
+```
+Pour lancer la démonstration simulé:
+```git
+roslaunch grp-pourpre challenge3_simulation.launch
 ```
 
 Cette commande active donc le launch qui lance à la fois les scripts Python, rviz (avec la configuration préalablement établie), gmapping ainsi que le rosbag.
