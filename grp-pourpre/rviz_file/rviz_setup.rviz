@@ -91,10 +91,32 @@ Visualization Manager:
           Value: true
         base_link:
           Value: false
+        camera_accel_frame:
+          Value: true
+        camera_accel_optical_frame:
+          Value: true
+        camera_aligned_depth_to_color_frame:
+          Value: true
+        camera_color_frame:
+          Value: true
+        camera_color_optical_frame:
+          Value: true
         camera_depth_frame:
           Value: false
         camera_depth_optical_frame:
           Value: false
+        camera_gyro_frame:
+          Value: true
+        camera_gyro_optical_frame:
+          Value: true
+        camera_infra1_frame:
+          Value: true
+        camera_infra1_optical_frame:
+          Value: true
+        camera_infra2_frame:
+          Value: true
+        camera_infra2_optical_frame:
+          Value: true
         camera_link:
           Value: false
         camera_rgb_frame:
@@ -175,11 +197,27 @@ Visualization Manager:
             base_footprint:
               base_link:
                 camera_rgb_frame:
-                  camera_depth_frame:
-                    camera_depth_optical_frame:
-                      {}
                   camera_link:
-                    {}
+                    camera_accel_frame:
+                      camera_accel_optical_frame:
+                        {}
+                    camera_aligned_depth_to_color_frame:
+                      camera_color_optical_frame:
+                        {}
+                    camera_color_frame:
+                      {}
+                    camera_depth_frame:
+                      camera_depth_optical_frame:
+                        {}
+                    camera_gyro_frame:
+                      camera_gyro_optical_frame:
+                        {}
+                    camera_infra1_frame:
+                      camera_infra1_optical_frame:
+                        {}
+                    camera_infra2_frame:
+                      camera_infra2_optical_frame:
+                        {}
                   camera_rgb_optical_frame:
                     {}
                 caster_back_link:
@@ -252,6 +290,14 @@ Visualization Manager:
       Unreliable: false
       Use Timestamp: true
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: visualization_marker
+      Name: Marker
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -317,4 +363,4 @@ Window Geometry:
     collapsed: false
   Width: 1267
   X: 214
-  Y: 28
+  Y: 27

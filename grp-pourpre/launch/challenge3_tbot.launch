@@ -3,6 +3,7 @@
 	<node pkg="urg_node" name="Laser" type="urg_node"/>
 	<include file="$(find turtlebot_bringup)/launch/minimal.launch">
 	</include>
+	<include file="$(find realsense2_camera)/launch/rs_aligned_depth.launch" />
 	<node pkg="tf" type="static_transform_publisher" name="scan_tf_broadcaster" args="0 0.1 0.1 0 0 0 1 base_footprint laser 10" />
 	<node pkg="grp-pourpre" name="prog_python" type="move_avoid_collision.py"/>
 	 <node type="rviz" name="rviz" pkg="rviz" args="-d $(find grp-pourpre)/rviz_file/rviz_setup.rviz" />
